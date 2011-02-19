@@ -7,19 +7,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.AbsoluteLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.TextView;
 import android.os.Handler; 
 import android.os.Message;
 import android.util.Log;
+import android.widget.FrameLayout;
 public class CounterActivity extends PrefecturesActivityBase {
 	private TextView CntText;
+	AbsoluteLayout.LayoutParams params2;
+	Integer[][] StationXY;
+	Integer Spoint = 25;
+	Long TempD = 12L;
+	float Lation = 1.1f;
 	int mCount = 0;
+	private Integer ScleWidth = 0;
+	private Integer ScleHeight = 0;
+	Integer Pointx =  (300/13)*2;
 	/*
 	 * TODO:推奨されてないやり方
 	 */
-
+	
     private Long lngXday = new Date("2011/3/12").getTime();
 
     @Override
@@ -34,10 +45,14 @@ public class CounterActivity extends PrefecturesActivityBase {
         
         initializeComponents();
     }
-    
+    private void getLayoutScle(int w ,int h){ScleHeight = h;ScleWidth=w;}
+	
+   
     private void initializeComponents() {
+    	
 		Context context = this;
-		
+		//StationXY[0][0to11] = X座標 StationXY[1][0to11]=Y座標　StationXY[1][12] = 画像累進倍率
+		StationXY = MkStationXy();
 		LinearLayout layouthrzntl1 = new LinearLayout(context);
 		LinearLayout layouthrzntl2 = new LinearLayout(context);
 		LinearLayout layoutvrtcl = new LinearLayout(context);
@@ -61,8 +76,44 @@ public class CounterActivity extends PrefecturesActivityBase {
 		CntText.setTextColor(Color.RED);
 		layoutvrtcl.addView(layouthrzntl2);
 		layouthrzntl2.addView(CntText,params1);
+
+    	FrameLayout FlmLayout = new FrameLayout(context){
+    		@Override
+    		protected void  onSizeChanged(int w, int h, int oldw, int oldh) {
+    	    	getLayoutScle(w,h);
+    		}
+    	};
+    	layoutvrtcl.addView(FlmLayout);
+    	/*
+    	 * TODO:後でパラメータをクラス化
+    	 */
+    	ScleWidth = 320;
+    	ScleHeight = 157;
+
+    	params2 = new AbsoluteLayout.LayoutParams(
+    			40,40,(ScleWidth*StationXY[0][0])/StationXY[0][12],(ScleHeight*StationXY[1][0])/StationXY[1][12]-Spoint);
+    	LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
+    			LinearLayout.LayoutParams.FILL_PARENT,
+    			LinearLayout.LayoutParams.FILL_PARENT);
+    	Log.v("CNT13",Integer.toString(ScleWidth));
+    	Log.v("CNT14",Integer.toString(ScleHeight));
+
+    	
+    	ImageView TrainImg = new ImageView(context);
+    	ImageView RailImg  = new ImageView(context);
+    	AbsoluteLayout AbsLayout = new AbsoluteLayout(context);
+    	TrainImg.setImageResource(R.drawable.train);
+    	RailImg.setImageResource(R.drawable.rail);
+    	FlmLayout.addView(RailImg,params1);
+    	FlmLayout.addView(AbsLayout,params1);
+    	AbsLayout.addView(TrainImg,params2);
+    	Log.v("CNT15",Integer.toString(ScleWidth));
+    	Log.v("CNT16",Integer.toString(ScleHeight));
+    	//FlmLayout.addView(MkTrainAnime(context,FlmLayout.getWidth(),FlmLayout.getHeight()));
 		//layout.addView(stopButton);
+
 		loopcounter.start();
+
     }
     @Override protected boolean onLocationChange(Context context, Intent intent) {
     	++mCount;
@@ -98,7 +149,13 @@ public class CounterActivity extends PrefecturesActivityBase {
                 			 Long.toString(TimeLeft[2]) + "分" 
                 			 // + Long.toString(TimeLeft[1]) + "秒"
                 			 );
-                	
+                	 if (TimeLeft[0] <= 10L){
+	                	 if (TempD.equals(TimeLeft[0])){
+	                	 }else{
+	                		 AbstLayParamUpdate(TimeLeft[0]);
+	                		 TempD = TimeLeft[0];
+	                	 }
+                	 }
                 	}else{
                 		OpeningAfter();
                 		this.stop();
@@ -109,6 +166,7 @@ public class CounterActivity extends PrefecturesActivityBase {
         }
         private void OpeningAfter() {
         	CntText.setText("00日00時00分" );
+        	AbstLayParamUpdate(0L);
         }
         private Long[] CalTimeLeft(){
         	/*
@@ -117,7 +175,11 @@ public class CounterActivity extends PrefecturesActivityBase {
         	 * をそれぞれ管理する
         	 */
         	Long[] RtnTLefts = new Long[4];
-        	Long lngNow = new Date().getTime();
+        	/*
+        	 * TODO:後で削除
+        	 */
+        	//Long lngNow = new Date().getTime();
+        	Long lngNow = new Date("2011/3/12").getTime();
         	//TODO 型の違いを学習
         	final Integer ONEDAY  = 1000 * 60 * 60 * 24;
         	final Integer ONEHOUR  = 1000 * 60 * 60;
@@ -130,7 +192,7 @@ public class CounterActivity extends PrefecturesActivityBase {
         	}
         	//残り時間をミリ秒で算出
         	if(lngXday - lngNow > 0L){
-        		Log.v("CNT",lngXday + "," + lngNow+ "," + (lngXday - lngNow));
+        		Log.v("CNTAA",lngXday + "," + lngNow+ "," + (lngXday - lngNow));
         		Long diffday = (lngXday - lngNow);
         		RtnTLefts[0] = diffday / ONEDAY;
             	RtnTLefts[1] = (diffday - RtnTLefts[0]*ONEDAY )/ ONEHOUR;
@@ -143,4 +205,50 @@ public class CounterActivity extends PrefecturesActivityBase {
         }
     };
     private LoopCounter loopcounter = new LoopCounter();
+    private void AbstLayParamUpdate(long OrderofDay){
+    	int i = 11 - (int)OrderofDay;
+    	float ThisLate = (float)Math.pow(Lation, i);
+    	Log.v("TEST",Float.toString(ThisLate));
+    	
+    	params2.x = (ScleWidth*StationXY[0][i])/StationXY[0][12];
+    	params2.y = (int)Math.round((ScleHeight*StationXY[1][i])/StationXY[1][12]- ThisLate*Spoint);
+
+    	params2.width = (int)ThisLate*40;
+    	params2.height = (int)ThisLate*40;
+    }
+    /**
+     * TODO :後でXML
+     * より取得に修正
+     * 倍率も包含
+     */
+    private Integer[][] MkStationXy(){
+    	Integer[][] stationxy = new Integer[2][13];
+    	stationxy[0][0]   = 452	;
+    	stationxy[0][1]   = 414	;
+    	stationxy[0][2]   = 377	;
+    	stationxy[0][3]   = 339	;
+    	stationxy[0][4]   = 302	;
+    	stationxy[0][5]   = 264	;
+    	stationxy[0][6]   = 226	;
+    	stationxy[0][7]   = 189	;
+    	stationxy[0][8]   = 151	;
+    	stationxy[0][9]   = 114   ;
+    	stationxy[0][10]  = 76	;
+    	stationxy[0][11]  = 38	;
+    	stationxy[0][12]  = 486;
+    	stationxy[1][0]   =  18    ;
+    	stationxy[1][1]   = 36     ;
+    	stationxy[1][2]   = 54     ;
+    	stationxy[1][3]   = 72     ;
+    	stationxy[1][4]   = 90     ;
+    	stationxy[1][5]   =     108;
+    	stationxy[1][6]   = 126    ;
+    	stationxy[1][7]   = 144    ;
+    	stationxy[1][8]   = 162    ;
+    	stationxy[1][9]   = 180    ;
+    	stationxy[1][10]  =     198;
+    	stationxy[1][11]  = 216    ;
+    	stationxy[1][12]  =234;
+    	return stationxy;
+    	}
 }
