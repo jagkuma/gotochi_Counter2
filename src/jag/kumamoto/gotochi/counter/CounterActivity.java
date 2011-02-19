@@ -3,11 +3,16 @@ package jag.kumamoto.gotochi.counter;
 import java.util.Date;
 
 import jag.kumamoto.apps.gotochi.PrefecturesActivityBase;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.AbsoluteLayout;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -16,9 +21,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.FrameLayout;
+//テストのために追加　後で削除
+/*
+ * TODO:後で削除
+ */
+import android.app.DatePickerDialog;
+import android.widget.DatePicker;
 public class CounterActivity extends PrefecturesActivityBase {
 	private TextView CntText;
-	AbsoluteLayout.LayoutParams params2;
+	AbsoluteLayout.LayoutParams params2=null;
 	Integer[][] StationXY;
 	Integer Spoint = 25;
 	Long TempD = 12L;
@@ -27,6 +38,11 @@ public class CounterActivity extends PrefecturesActivityBase {
 	private Integer ScleWidth = 0;
 	private Integer ScleHeight = 0;
 	Integer Pointx =  (300/13)*2;
+	//テスト用日付
+	/*
+	 * TODO:後で削除
+	 */
+	String SetToday = "2011/3/1" ;
 	/*
 	 * TODO:推奨されてないやり方
 	 */
@@ -44,12 +60,13 @@ public class CounterActivity extends PrefecturesActivityBase {
 		
         
         initializeComponents();
+        loopcounter.start();
     }
     private void getLayoutScle(int w ,int h){ScleHeight = h;ScleWidth=w;}
 	
    
     private void initializeComponents() {
-    	
+
 		Context context = this;
 		//StationXY[0][0to11] = X座標 StationXY[1][0to11]=Y座標　StationXY[1][12] = 画像累進倍率
 		StationXY = MkStationXy();
@@ -63,7 +80,25 @@ public class CounterActivity extends PrefecturesActivityBase {
 		LinearLayout.LayoutParams params1;
 		params1 = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.WRAP_CONTENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT);		
+				LinearLayout.LayoutParams.WRAP_CONTENT);
+		//テストのため
+		/*
+    	 * TODO:後で削除
+    	 */
+		Button btnS = new Button(context);
+		btnS.setText("日付をセット(テスト用");
+
+
+		btnS.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDialog(1);
+
+			}
+		});
+			
+		layoutvrtcl.addView(btnS);
+		
 		layoutvrtcl.addView(layouthrzntl1);
 		TextView TitleText = new TextView(context);
 		TitleText.setText("九州新幹線全線開通まで");
@@ -89,9 +124,10 @@ public class CounterActivity extends PrefecturesActivityBase {
     	 */
     	ScleWidth = 320;
     	ScleHeight = 157;
-
-    	params2 = new AbsoluteLayout.LayoutParams(
-    			40,40,(ScleWidth*StationXY[0][0])/StationXY[0][12],(ScleHeight*StationXY[1][0])/StationXY[1][12]-Spoint);
+    	if (params2==null){
+	    	params2 = new AbsoluteLayout.LayoutParams(
+	    			40,40,(ScleWidth*StationXY[0][0])/StationXY[0][12],(ScleHeight*StationXY[1][0])/StationXY[1][12]-Spoint);
+    	}
     	LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
     			LinearLayout.LayoutParams.FILL_PARENT,
     			LinearLayout.LayoutParams.FILL_PARENT);
@@ -112,7 +148,7 @@ public class CounterActivity extends PrefecturesActivityBase {
     	//FlmLayout.addView(MkTrainAnime(context,FlmLayout.getWidth(),FlmLayout.getHeight()));
 		//layout.addView(stopButton);
 
-		loopcounter.start();
+		
 
     }
     @Override protected boolean onLocationChange(Context context, Intent intent) {
@@ -144,18 +180,24 @@ public class CounterActivity extends PrefecturesActivityBase {
                 	TimeLeft = CalTimeLeft();
                 	//TODO:拡張可能に書き換える
                 	if (TimeLeft[3] == 1L ){
+                	 
+                	 if (TimeLeft[0] <= 10L){
+	                	 if (TempD.equals(TimeLeft[0])){
+	                		 AbstLayParamUpdate(TimeLeft[0]);
+	                		 TempD = TimeLeft[0];
+	                	 }else{
+	                		 AbstLayParamUpdate(TimeLeft[0]);
+	                		 TempD = TimeLeft[0];
+	                	 }
+	                }else{
+	                		 AbstLayParamUpdate(11);
+	                }
+                	 
                 	 CntText.setText(Long.toString(TimeLeft[0]) + "日" +
                 			 Long.toString(TimeLeft[1]) + "時" +
                 			 Long.toString(TimeLeft[2]) + "分" 
                 			 // + Long.toString(TimeLeft[1]) + "秒"
                 			 );
-                	 if (TimeLeft[0] <= 10L){
-	                	 if (TempD.equals(TimeLeft[0])){
-	                	 }else{
-	                		 AbstLayParamUpdate(TimeLeft[0]);
-	                		 TempD = TimeLeft[0];
-	                	 }
-                	 }
                 	}else{
                 		OpeningAfter();
                 		this.stop();
@@ -165,8 +207,9 @@ public class CounterActivity extends PrefecturesActivityBase {
  
         }
         private void OpeningAfter() {
-        	CntText.setText("00日00時00分" );
+        	
         	AbstLayParamUpdate(0L);
+        	CntText.setText("00日00時00分" );
         }
         private Long[] CalTimeLeft(){
         	/*
@@ -179,7 +222,7 @@ public class CounterActivity extends PrefecturesActivityBase {
         	 * TODO:後で削除
         	 */
         	//Long lngNow = new Date().getTime();
-        	Long lngNow = new Date("2011/3/12").getTime();
+        	Long lngNow = new Date(SetToday).getTime();
         	//TODO 型の違いを学習
         	final Integer ONEDAY  = 1000 * 60 * 60 * 24;
         	final Integer ONEHOUR  = 1000 * 60 * 60;
@@ -215,6 +258,29 @@ public class CounterActivity extends PrefecturesActivityBase {
 
     	params2.width = (int)ThisLate*40;
     	params2.height = (int)ThisLate*40;
+    	initializeComponents();
+    	
+    }
+    /*
+	 * TODO:後で削除
+	 */
+    //テストのために作成
+    protected Dialog onCreateDialog(int id){
+    	if(id == 1){
+    		DatePickerDialog Dialog = new  DatePickerDialog(this ,
+					 new DatePickerDialog.OnDateSetListener() {
+						public void onDateSet(DatePicker view,int year ,int monthOfYear,int dayOfMonth){
+							SetToday = Integer.toString(year) + "/" + Integer.toString(monthOfYear+1) + "/" +  Integer.toString(dayOfMonth);
+							loopcounter.start();
+						}
+					},
+					2011,
+					2,
+					1
+			){};
+			return Dialog;
+    	}
+    	return null;
     }
     /**
      * TODO :後でXML
