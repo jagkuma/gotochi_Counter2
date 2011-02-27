@@ -11,6 +11,7 @@ import android.os.Message;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.*;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -72,11 +73,12 @@ public class CounterActivity extends PrefecturesActivityBase {
     private void scontinue() {
     	ScleWidth = BackGroundImg.getMeasuredWidth();
 	    ScleHeight = BackGroundImg.getMeasuredHeight();
+	    Rect rect = fitting(480,800,ScleWidth,ScleHeight);
 	    //背景の配置基準座標を取得
-	    x1 = WindowWidth/2-(480*ScleHeight/800)/2;
-	    y1 = 0;
+	    x1 = rect.left;
+	    y1 = rect.top;
 	    //配置時の縮小倍率取得
-	    rate =  ScleHeight/800f;
+	    rate =  ((float)rect.left-rect.right)/800f;
 	    
 	    myimg = new MyCountView(getApplication(),x1,y1,rate);
 	    train = new MyTrainView(getApplication(),x1,y1,rate);
@@ -205,7 +207,46 @@ public class CounterActivity extends PrefecturesActivityBase {
 
     	return rtnint;
     }
- 
+    private Rect fitting(int srcWidth, int srcHeight, int destWidth, int destHeight) { 
+		int rectWidth, rectHeight; 
+		int rectTop, rectLeft; 
+		if (destWidth < srcWidth || destHeight < srcHeight) { 
+			if (srcWidth < srcHeight) { 
+				if (destWidth < destHeight) { 
+					int height = (int) (destWidth * (srcHeight / (float) srcWidth)); 
+					//大きさが小さいほうを出力
+					rectHeight = (height > destHeight) ? destHeight : height; 
+					rectWidth = (int) (rectHeight * (srcWidth / (float) srcHeight)); 
+				} else { 
+
+					rectWidth = (int) (destHeight * (srcWidth / (float) srcHeight)); 
+					rectHeight = (int) (rectWidth * (srcHeight / (float) srcWidth)); 
+				} 
+			} else { 
+
+				if (destWidth < destHeight) { 
+					rectHeight = (int) (destWidth * (srcHeight / (float) srcWidth)); 
+					rectWidth = (int) (rectHeight * (srcWidth / (float) srcHeight)); 
+				} else { 
+
+					int width = (int) (destHeight * (srcWidth / (float) srcHeight)); 
+					rectWidth = (width > destWidth) ? destWidth : width; 
+					rectHeight = (int) (rectWidth * (srcHeight / (float) srcWidth)); 
+				} 
+			} 
+
+			rectLeft = (destWidth - rectWidth) / 2; 
+			rectTop = (destHeight - rectHeight) / 2; 
+		} else { 
+
+			rectLeft = (destWidth - srcWidth) / 2; 
+			rectTop = (destHeight - srcHeight) / 2; 
+			rectWidth = srcWidth; 
+			rectHeight = srcHeight; 
+		} 
+
+		return new Rect(rectLeft, rectTop, rectLeft + rectWidth, rectTop + rectHeight); 
+    }
        class MyCountView extends View {
     	   float BaseX;
     	   float BaseY;
