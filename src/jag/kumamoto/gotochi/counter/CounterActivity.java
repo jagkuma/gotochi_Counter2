@@ -78,7 +78,7 @@ public class CounterActivity extends PrefecturesActivityBase {
 	    x1 = rect.left;
 	    y1 = rect.top;
 	    //配置時の縮小倍率取得
-	    rate =  ((float)rect.left-rect.right)/800f;
+	    rate =  ((float)rect.right- rect.left)/480f;
 	    
 	    myimg = new MyCountView(getApplication(),x1,y1,rate);
 	    train = new MyTrainView(getApplication(),x1,y1,rate);
