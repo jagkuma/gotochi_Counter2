@@ -1,38 +1,37 @@
 
 package jag.kumamoto.gotochi.counter;
 
-import jag.kumamoto.apps.gotochi.PrefecturesActivityBase;
-
 import java.util.Date;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.*;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import android.graphics.Paint.FontMetrics;
 import android.graphics.drawable.BitmapDrawable; 
 
-public class CounterActivity extends PrefecturesActivityBase {
+public class CounterActivity extends Activity {
     /** Called when the activity is first created. */
     /** 画面描画用 View */
 	static final  int DIALOG_PAUSED_ID = 1;
     android.os.Handler handler = new android.os.Handler();
-    Integer WindowHeight = 0;
-    Integer WindowWidth = 0;
-	Integer ScleWidth = 0;
-	Integer ScleHeight = 0;
+    int WindowHeight = 0;
+    int WindowWidth = 0;
+	int ScleWidth = 0;
+	int ScleHeight = 0;
 	ImageView BackGroundImg;
 	MyTrainView train ;
-	Integer x1=0;
-	Integer y1=0;
+	int x1=0;
+	int y1=0;
 	FrameLayout FR;
 	Float rate;
 
@@ -70,30 +69,32 @@ public class CounterActivity extends PrefecturesActivityBase {
 		super.onWindowFocusChanged(hasFocus);
 		scontinue();
 	}
-    private void scontinue() {
-    	ScleWidth = BackGroundImg.getMeasuredWidth();
-	    ScleHeight = BackGroundImg.getMeasuredHeight();
-	    Rect rect = fitting(480,800,ScleWidth,ScleHeight);
-	    //背景の配置基準座標を取得
-	    x1 = rect.left;
-	    y1 = rect.top;
-	    //配置時の縮小倍率取得
-	    rate =  ((float)rect.right- rect.left)/480f;
-	    
-	    myimg = new MyCountView(getApplication(),x1,y1,rate);
-	    train = new MyTrainView(getApplication(),x1,y1,rate);
-	    ball= new MyCeremonyBallView(getApplication(),x1,y1,rate);
-	    veil = new MyveilView(getApplication(),x1,y1,WindowWidth,WindowHeight,rate);
+   private void scontinue() { 
+	     FR.removeAllViews();//子ビューをすべて消去 
 
-	    FR.addView(myimg);
-	    FR.addView(train);
-	    FR.addView(ball);
-	    FR.addView(veil);
-
-	    //スレッドスタート
-	    loopcounter.start();
-    }
-    class LoopCounter extends Handler {
+	     ScleWidth = BackGroundImg.getMeasuredWidth(); 
+	    ScleHeight = BackGroundImg.getMeasuredHeight(); 
+	    Rect rect = fitting(480,800,ScleWidth,ScleHeight); 
+	    //背景の配置基準座標を取得 
+	    x1 = rect.left; 
+	    y1 = rect.top; 
+	    //配置時の縮小倍率取得 
+	    rate =  ((float)rect.right-rect.left)/480.0f; 
+	    myimg = new MyCountView(getApplication(),x1,y1,rate); 
+	    train = new MyTrainView(getApplication(),x1,y1,rate); 
+	    ball= new MyCeremonyBallView(getApplication(),x1,y1,rate); 
+	    veil = new 
+	MyveilView(getApplication(),x1,y1,WindowWidth,WindowHeight,rate); 
+	     FR.addView(BackGroundImg);//追加しなおす 
+	    FR.addView(myimg); 
+	    FR.addView(train); 
+	    FR.addView(ball); 
+	    FR.addView(veil); 
+	    Resources res = getResources();
+	    //スレッドスタート 
+	    loopcounter.start(); 
+	    } 
+       class LoopCounter extends Handler {
     	
 	    private boolean isUpdate;
 	    public void start(){
@@ -138,11 +139,11 @@ public class CounterActivity extends PrefecturesActivityBase {
 	    	Long[] RtnTLefts = new Long[4];
 	    	Long lngNow = new Date().getTime();
 
-	    	final Integer ONEDAY  = 1000 * 60 * 60 * 24;
-	    	final Integer ONEHOUR  = 1000 * 60 * 60;
-	    	final Integer ONEMIN  = 1000 * 60;
+	    	final int ONEDAY  = 1000 * 60 * 60 * 24;
+	    	final int ONEHOUR  = 1000 * 60 * 60;
+	    	final int ONEMIN  = 1000 * 60;
 	    	//未使用　今後の拡張のため
-	    	final Integer ONESEC  = 1000;
+	    	final int ONESEC  = 1000;
 
 	    	for(int i = 0; i<=3;i++){
 	    		RtnTLefts[i] = 0L;
@@ -496,7 +497,89 @@ public class CounterActivity extends PrefecturesActivityBase {
 					startActivity(new Intent(CounterActivity.this,SecondActivity.class));
 				}
    		    });
+
    		ball.invalidate();
+   		Resources res = getResources();
+   		String[] recomtext = new String[3];
+   		recomtext[0] = res.getString(R.string.recomenddwnloadL1);
+   		recomtext[1] = res.getString(R.string.recomenddwnloadL2);
+   		recomtext[2] = res.getString(R.string.recomenddwnloadL3);
+   		
+   		MyTextView recommend = new MyTextView(getApplication(),x1,y1,rate,recomtext);
+   		FR.addView(recommend);
 	}
+    public class MyTextView extends View{
+ 	   float BaseX ;
+ 	   float BaseY;
+ 	   float thisrate;
+ 	   String[] thisText;
+ 	   public MyTextView(Context context,float x1,float y1,float rate,String[] texts) {
+ 		super(context);
+ 		BaseX = x1;
+ 		BaseY = y1;
+ 		thisText = texts;
+ 		thisrate = rate;
+  	}
+
+ 	protected void  onDraw(Canvas canvas){
+ 		   super.onDraw(canvas);
+ 		// 文字列用ペイントの生成
+ 		  Paint textPaint = new Paint( Paint.ANTI_ALIAS_FLAG);
+ 		  textPaint.setTextSize( 27*thisrate);
+ 		  textPaint.setColor( Color.BLUE);
+ 		  FontMetrics fontMetrics = textPaint.getFontMetrics();
+
+ 		  // 背景をテキストと同じ色で描画
+ 		  //canvas.drawRect( 0, 0, getWidth(), getHeight(), textPaint);
+ 		  // テキストの中心の座標
+ 		  float baseLeft = 100*thisrate + x1 ;
+ 		  float baseTop  = 233*thisrate + y1;
+ 		  float baseRight  = 401*thisrate + x1;
+ 		  float baseBottom  = 407*thisrate + y1;
+ 		  float patting     = 5*thisrate;
+ 		  float ruff        = 5*thisrate;
+ 		  String[] text1 = thisText;
+
+ 		  // 文字列の幅を取得
+ 		  float textWidth = textPaint.measureText( text1[0]);
+
+ 		  // 文字列の幅からX座標を計算
+ 		  float textX = baseLeft + patting ;
+ 		  // 文字列の高さからY座標を計算
+ 		  float textY = baseTop - fontMetrics.ascent + patting;
+
+ 		  // 吹き出し用ペイントの生成0
+ 		  Paint balloonPaint = new Paint( Paint.ANTI_ALIAS_FLAG);
+ 		  balloonPaint.setTextSize( 27*thisrate);
+ 		  balloonPaint.setColor( Color.argb(198,255,255,255));
+
+  		  // 吹き出しの描画
+ 		  RectF balloonRectF = new RectF( baseLeft, baseTop, baseRight, baseBottom);
+ 		  canvas.drawRoundRect(balloonRectF, ruff, ruff, balloonPaint);
+
+ 		  // 文字列の描画
+ 		  canvas.drawText( text1[0], textX, textY, textPaint);
+ 		 canvas.drawText( text1[1], textX, textY + fontMetrics.bottom -fontMetrics.ascent, textPaint);
+ 		canvas.drawText( text1[2], textX, textY + 2*(fontMetrics.bottom -fontMetrics.ascent), textPaint);
+ 		  /*
+ 		    
+ 		   Paint mPaint = new Paint();
+ 		   
+ 		   mPaint.setARGB(255, 255, 255, 125);
+ 		   mPaint.setStyle(Paint.Style.FILL);
+ 		   mPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+ 		   mPaint.setTextSize(20*thisrate);
+ 		   Paint rPaint = new Paint(); 
+ 		   rPaint.setARGB(255,255,255,255);
+ 		   RectF BakGrndrect = new RectF(Math.round(81*thisrate+x1), Math.round(416*thisrate+y1),
+ 				   Math.round(81*thisrate+x1+25), Math.round(416*thisrate+y1+25));
+ 		   canvas.drawRoundRect(BakGrndrect, 5,2,rPaint);
+ 		   canvas.drawText(thisText1,Math.round(81*thisrate+x1), 430, mPaint);
+ 		   //canvas.drawText(thisText2,Math.round(81*thisrate+x1), Math.round(440*thisrate+y1), mPaint);
+ 		    * 
+ 		    */
+ 	   }
+
+    }   
  
 }

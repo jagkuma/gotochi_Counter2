@@ -2,5 +2,8 @@
 <resources>
     <string name="hello">Hello World, testcounter!</string>
     <string name="app_name">全線開通記念カウンター</string>
-    <string name="recomenddwnload">"ご当地アプリがダウンロードできます。\n画面のどこかをクリックしてください"</string>
+    
+    <string name="recomenddwnloadL1">"画面をタップすると"</string>
+    <string name="recomenddwnloadL2">"ご当地アプリが"</string>
+    <string name="recomenddwnloadL3">"ダウンロードできます。"</string>
 </resources>

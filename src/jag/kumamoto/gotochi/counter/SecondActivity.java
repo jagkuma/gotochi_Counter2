@@ -1,16 +1,16 @@
 
 package jag.kumamoto.gotochi.counter;
 
-import jag.kumamoto.apps.gotochi.PrefecturesActivityBase;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.DialogInterface;
 import android.content.Intent;
 
-public class SecondActivity extends PrefecturesActivityBase {
+public class SecondActivity extends Activity {
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
