@@ -136,7 +136,7 @@ public class CounterActivity extends Activity {
 	    	 * をそれぞれ管理する
 	    	 */
 	    	Long[] RtnTLefts = new Long[4];
-	    	Long lngNow = new Date("2011/3/12").getTime();
+	    	Long lngNow = new Date().getTime();
 
 	    	final int ONEDAY  = 1000 * 60 * 60 * 24;
 	    	final int ONEHOUR  = 1000 * 60 * 60;
