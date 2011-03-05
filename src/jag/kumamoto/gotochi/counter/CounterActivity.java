@@ -72,7 +72,7 @@ public class CounterActivity extends Activity {
    private void scontinue() { 
 	     FR.removeAllViews();//子ビューをすべて消去 
 
-	     ScleWidth = BackGroundImg.getMeasuredWidth(); 
+	    ScleWidth = BackGroundImg.getMeasuredWidth(); 
 	    ScleHeight = BackGroundImg.getMeasuredHeight(); 
 	    Rect rect = fitting(480,800,ScleWidth,ScleHeight); 
 	    //背景の配置基準座標を取得 
@@ -83,9 +83,8 @@ public class CounterActivity extends Activity {
 	    myimg = new MyCountView(getApplication(),x1,y1,rate); 
 	    train = new MyTrainView(getApplication(),x1,y1,rate); 
 	    ball= new MyCeremonyBallView(getApplication(),x1,y1,rate); 
-	    veil = new 
-	MyveilView(getApplication(),x1,y1,WindowWidth,WindowHeight,rate); 
-	     FR.addView(BackGroundImg);//追加しなおす 
+	    veil = new MyveilView(getApplication(),x1,y1,WindowWidth,WindowHeight,rate); 
+	    FR.addView(BackGroundImg);//追加しなおす 
 	    FR.addView(myimg); 
 	    FR.addView(train); 
 	    FR.addView(ball); 
@@ -93,8 +92,8 @@ public class CounterActivity extends Activity {
 	    Resources res = getResources();
 	    //スレッドスタート 
 	    loopcounter.start(); 
-	    } 
-       class LoopCounter extends Handler {
+   } 
+   class LoopCounter extends Handler {
     	
 	    private boolean isUpdate;
 	    public void start(){
@@ -137,7 +136,7 @@ public class CounterActivity extends Activity {
 	    	 * をそれぞれ管理する
 	    	 */
 	    	Long[] RtnTLefts = new Long[4];
-	    	Long lngNow = new Date().getTime();
+	    	Long lngNow = new Date("2011/3/12").getTime();
 
 	    	final int ONEDAY  = 1000 * 60 * 60 * 24;
 	    	final int ONEHOUR  = 1000 * 60 * 60;
@@ -248,22 +247,23 @@ public class CounterActivity extends Activity {
 
 		return new Rect(rectLeft, rectTop, rectLeft + rectWidth, rectTop + rectHeight); 
     }
-       class MyCountView extends View {
-    	   float BaseX;
-    	   float BaseY;
-    	   float BaseRate;
-    	   BitmapDrawable tempbitmap;
-    	   BitmapDrawable bitmapN0;
-    	   BitmapDrawable bitmapN1;
-    	   BitmapDrawable bitmapN2;
-    	   BitmapDrawable bitmapN3;
-    	   BitmapDrawable bitmapN4;
-    	   BitmapDrawable bitmapN5;
-    	   BitmapDrawable bitmapN6;
-    	   BitmapDrawable bitmapN7;
-    	   BitmapDrawable bitmapN8;
-    	   BitmapDrawable bitmapN9;
-	    public MyCountView(Context context,float x1,float y1,float rate) {  
+    class MyCountView extends View {
+    	float BaseX;
+    	float BaseY;
+    	float BaseRate;
+    	BitmapDrawable tempbitmap;
+    	BitmapDrawable bitmapN0;
+    	BitmapDrawable bitmapN1;
+    	BitmapDrawable bitmapN2;
+    	BitmapDrawable bitmapN3;
+    	BitmapDrawable bitmapN4;
+    	BitmapDrawable bitmapN5;
+    	BitmapDrawable bitmapN6;
+    	BitmapDrawable bitmapN7;
+    	BitmapDrawable bitmapN8;
+    	BitmapDrawable bitmapN9;
+	    
+    	public MyCountView(Context context,float x1,float y1,float rate) {  
 	      super(context); 
 	      BaseX = x1;
 	      BaseY = y1;
@@ -445,11 +445,9 @@ public class CounterActivity extends Activity {
 		    		  		Math.round((PointXY[0][1]+ PointXY[2][1])*BaseRate+x1), Math.round((PointXY[1][1]+PointXY[3][1])*BaseRate+y1));
 	    	}
 	    	
-    		  //BitmapDrawable の描画  
+    		//BitmapDrawable の描画  
 	    	bitmapDrawable.draw(canvas);
 		    
-	    	
-	    	
         }  
 	    private Float[][] MakeList(){
 	    	Float[][] XY = new Float[4][2];
@@ -467,26 +465,26 @@ public class CounterActivity extends Activity {
 	   float winheight;
 	   float thisrate;
 	   public MyveilView(Context context,float x1,float y1,float ww,float wh,float rate) {
-		super(context);
-		BaseX = x1;
-		BaseY = y1;
-		winwidth = ww;
-		winheight = wh;
-		thisrate = rate;
-	}
+			super(context);
+			BaseX = x1;
+			BaseY = y1;
+			winwidth = ww;
+			winheight = wh;
+			thisrate = rate;
+	   }
 
-	protected void  onDraw(Canvas canvas){
+	   protected void  onDraw(Canvas canvas){
 		   super.onDraw(canvas);
 		
 		   Paint mPaint = new Paint();
 		   mPaint.setStyle(Paint.Style.FILL);
 		   mPaint.setARGB(255, 0, 0, 0);
 			
-			canvas.drawRect(x1+(480*thisrate), 0,winwidth , winheight, mPaint);
-			canvas.drawRect(0, 0,x1 , winheight, mPaint);
+		   canvas.drawRect(x1+(480*thisrate), 0,winwidth , winheight, mPaint);
+		   canvas.drawRect(0, 0,x1 , winheight, mPaint);
 	   }
 	
-   }
+    }
 
    	private void OpeningAfter() {
    		myimg.invalidate();
@@ -496,7 +494,7 @@ public class CounterActivity extends Activity {
 				//クリックされたら、ダイアログ表示用のアクティビティへ移動
 					startActivity(new Intent(CounterActivity.this,SecondActivity.class));
 				}
-   		    });
+   		});
 
    		ball.invalidate();
    		Resources res = getResources();
@@ -509,36 +507,35 @@ public class CounterActivity extends Activity {
    		FR.addView(recommend);
 	}
     public class MyTextView extends View{
- 	   float BaseX ;
- 	   float BaseY;
- 	   float thisrate;
- 	   String[] thisText;
- 	   public MyTextView(Context context,float x1,float y1,float rate,String[] texts) {
- 		super(context);
- 		BaseX = x1;
- 		BaseY = y1;
- 		thisText = texts;
- 		thisrate = rate;
-  	}
+    	float BaseX ;
+ 	    float BaseY;
+ 	    float thisrate;
+ 	    String[] thisText;
+ 	    
+ 	    public MyTextView(Context context,float x1,float y1,float rate,String[] texts) {
+	 		super(context);
+	 		BaseX = x1;
+	 		BaseY = y1;
+	 		thisText = texts;
+	 		thisrate = rate;
+ 	    }
 
  	protected void  onDraw(Canvas canvas){
- 		   super.onDraw(canvas);
- 		// 文字列用ペイントの生成
+ 		  super.onDraw(canvas);
+ 		  // 文字列用ペイントの生成
  		  Paint textPaint = new Paint( Paint.ANTI_ALIAS_FLAG);
  		  textPaint.setTextSize( 27*thisrate);
  		  textPaint.setColor( Color.BLUE);
  		  FontMetrics fontMetrics = textPaint.getFontMetrics();
 
- 		  // 背景をテキストと同じ色で描画
- 		  //canvas.drawRect( 0, 0, getWidth(), getHeight(), textPaint);
- 		  // テキストの中心の座標
- 		  float baseLeft = 100*thisrate + x1 ;
- 		  float baseTop  = 233*thisrate + y1;
- 		  float baseRight  = 401*thisrate + x1;
+ 		  // テキストの座標
+ 		  float baseLeft    = 100*thisrate + x1 ;
+ 		  float baseTop     = 233*thisrate + y1;
+ 		  float baseRight   = 401*thisrate + x1;
  		  float baseBottom  = 407*thisrate + y1;
  		  float patting     = 5*thisrate;
  		  float ruff        = 5*thisrate;
- 		  String[] text1 = thisText;
+ 		  String[] text1    = thisText;
 
  		  // 文字列の幅を取得
  		  float textWidth = textPaint.measureText( text1[0]);
@@ -548,36 +545,20 @@ public class CounterActivity extends Activity {
  		  // 文字列の高さからY座標を計算
  		  float textY = baseTop - fontMetrics.ascent + patting;
 
- 		  // 吹き出し用ペイントの生成0
+ 		  // 角なし四角のペイントの生成
  		  Paint balloonPaint = new Paint( Paint.ANTI_ALIAS_FLAG);
  		  balloonPaint.setTextSize( 27*thisrate);
  		  balloonPaint.setColor( Color.argb(198,255,255,255));
 
-  		  // 吹き出しの描画
+  		  // 角なし四角の描画
  		  RectF balloonRectF = new RectF( baseLeft, baseTop, baseRight, baseBottom);
  		  canvas.drawRoundRect(balloonRectF, ruff, ruff, balloonPaint);
 
  		  // 文字列の描画
  		  canvas.drawText( text1[0], textX, textY, textPaint);
- 		 canvas.drawText( text1[1], textX, textY + fontMetrics.bottom -fontMetrics.ascent, textPaint);
- 		canvas.drawText( text1[2], textX, textY + 2*(fontMetrics.bottom -fontMetrics.ascent), textPaint);
- 		  /*
- 		    
- 		   Paint mPaint = new Paint();
- 		   
- 		   mPaint.setARGB(255, 255, 255, 125);
- 		   mPaint.setStyle(Paint.Style.FILL);
- 		   mPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
- 		   mPaint.setTextSize(20*thisrate);
- 		   Paint rPaint = new Paint(); 
- 		   rPaint.setARGB(255,255,255,255);
- 		   RectF BakGrndrect = new RectF(Math.round(81*thisrate+x1), Math.round(416*thisrate+y1),
- 				   Math.round(81*thisrate+x1+25), Math.round(416*thisrate+y1+25));
- 		   canvas.drawRoundRect(BakGrndrect, 5,2,rPaint);
- 		   canvas.drawText(thisText1,Math.round(81*thisrate+x1), 430, mPaint);
- 		   //canvas.drawText(thisText2,Math.round(81*thisrate+x1), Math.round(440*thisrate+y1), mPaint);
- 		    * 
- 		    */
+ 		  canvas.drawText( text1[1], textX, textY + fontMetrics.bottom -fontMetrics.ascent, textPaint);
+ 		  canvas.drawText( text1[2], textX, textY + 2*(fontMetrics.bottom -fontMetrics.ascent), textPaint);
+ 		 
  	   }
 
     }   

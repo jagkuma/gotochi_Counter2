@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 
 public class SecondActivity extends Activity {
 
@@ -30,7 +31,10 @@ public class SecondActivity extends Activity {
                     	/*
                     	 * TODO:URIを入れる
                     	 */
-                    	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")));  
+                    	Resources res = getResources();
+                    	String gotochiuri = new String();
+                    	gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
+                    	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
                     }
                 });
 
