@@ -1,6 +1,9 @@
 package jag.kumamoto.gotochi.counter;
 
+import java.util.Calendar;
 import java.util.Date;
+
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,13 +12,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.*;
+import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
+import android.widget.AbsoluteLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-import android.graphics.Paint.FontMetrics;
 import android.graphics.drawable.BitmapDrawable;
 
 public class CounterActivity extends Activity {
@@ -31,11 +37,11 @@ public class CounterActivity extends Activity {
 	MyTrainView train;
 	int x1 = 0;
 	int y1 = 0;
-	FrameLayout FR;
+	AbsoluteLayout FR;
 	Float rate;
 
 	LoopCounter loopcounter = new LoopCounter();
-	Long lngXday = new Date("2011/3/12").getTime();
+	Long lngXday = getXDay().getTime();
 	Long TempD = 0L;
 	Long[] TimeLeft = new Long[5];
 	MyveilView veil;
@@ -50,7 +56,7 @@ public class CounterActivity extends Activity {
 		WindowHeight = display.getHeight();
 		WindowWidth = display.getWidth();
 
-		FR = new FrameLayout(getApplication());
+		FR = new AbsoluteLayout(getApplication());
 
 		setContentView(FR);
 		BackGroundImg = new ImageView(getApplication());
@@ -58,6 +64,13 @@ public class CounterActivity extends Activity {
 		BackGroundImg.setScaleType(ImageView.ScaleType.FIT_CENTER);
 		FR.addView(BackGroundImg);
 
+	}
+	
+	private static Date getXDay() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.clear();
+		calendar.set(2011, 2, 12, 18, 0);
+		return calendar.getTime();
 	}
 
 	private Display getDisplay() {
@@ -93,7 +106,7 @@ public class CounterActivity extends Activity {
 		FR.addView(train);
 		FR.addView(ball);
 		FR.addView(veil);
-		Resources res = getResources();
+		
 		// スレッドスタート
 		loopcounter.start();
 	}
@@ -134,7 +147,7 @@ public class CounterActivity extends Activity {
 					OpeningAfter();
 					this.stop();
 				}
-				sendMessageDelayed(obtainMessage(0), 30000);// 60000ミリ秒後にメッセージを出力
+				sendMessageDelayed(obtainMessage(0), 1000);// 60000ミリ秒後にメッセージを出力
 			}
 		}
 
@@ -144,7 +157,7 @@ public class CounterActivity extends Activity {
 			 * をそれぞれ管理する
 			 */
 			Long[] RtnTLefts = new Long[5];
-			Long lngNow = new Date("2011/3/12").getTime();
+			Long lngNow = new Date().getTime();
 
 			final int ONEDAY = 1000 * 60 * 60 * 24;
 			final int ONEHOUR = 1000 * 60 * 60;
@@ -155,7 +168,7 @@ public class CounterActivity extends Activity {
 			for (int i = 0; i < RtnTLefts.length; i++) {
 				RtnTLefts[i] = 0L;
 			}
-
+			
 			// 残り時間をミリ秒で算出
 			if (lngXday - lngNow > 0L) {
 				Long diffday = (lngXday - lngNow);
@@ -163,16 +176,11 @@ public class CounterActivity extends Activity {
 				RtnTLefts[1] = (diffday - RtnTLefts[0] * ONEDAY) / ONEHOUR;
 				RtnTLefts[2] = (diffday - RtnTLefts[0] * ONEDAY - RtnTLefts[1]
 						* ONEHOUR)/ ONEMIN;
-				RtnTLefts[3] = (
-						(
-							(diffday - RtnTLefts[0] * ONEDAY 
+				RtnTLefts[3] = (diffday - RtnTLefts[0] * ONEDAY 
 						            	- RtnTLefts[1]*ONEHOUR
 										- RtnTLefts[2]*ONEMIN  
 							)
-							/ ONESEC
-						)
-						<= 29L
-					)? 0L:30L;
+							/ ONESEC;
 				
 				// 超過フラグ　1:超過 2:未到達
 				RtnTLefts[4] = 2L;
@@ -644,86 +652,35 @@ public class CounterActivity extends Activity {
 
 	private void OpeningAfter() {
 		myimg.invalidate();
-		ball.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// クリックされたら、ダイアログ表示用のアクティビティへ移動
-				startActivity(new Intent(CounterActivity.this,
-						SecondActivity.class));
-			}
-		});
 
 		ball.invalidate();
-		Resources res = getResources();
-		String[] recomtext = new String[3];
-		recomtext[0] = res.getString(R.string.recomenddwnloadL1);
-		recomtext[1] = res.getString(R.string.recomenddwnloadL2);
-		recomtext[2] = res.getString(R.string.recomenddwnloadL3);
-
-		MyTextView recommend = new MyTextView(getApplication(), x1, y1, rate,
-				recomtext);
-		FR.addView(recommend);
-	}
-
-	public class MyTextView extends View {
-		float BaseX;
-		float BaseY;
-		float thisrate;
-		String[] thisText;
-
-		public MyTextView(Context context, float x1, float y1, float rate,
-				String[] texts) {
-			super(context);
-			BaseX = x1;
-			BaseY = y1;
-			thisText = texts;
-			thisrate = rate;
-		}
-
-		protected void onDraw(Canvas canvas) {
-			super.onDraw(canvas);
-			// 文字列用ペイントの生成
-			Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-			textPaint.setTextSize(27 * thisrate);
-			textPaint.setColor(Color.BLUE);
-			FontMetrics fontMetrics = textPaint.getFontMetrics();
-
-			// テキストの座標
-			float baseLeft = 100 * thisrate + x1;
-			float baseTop = 233 * thisrate + y1;
-			float baseRight = 401 * thisrate + x1;
-			float baseBottom = 407 * thisrate + y1;
-			float patting = 5 * thisrate;
-			float ruff = 5 * thisrate;
-			String[] text1 = thisText;
-
-			// 文字列の幅を取得
-			float textWidth = textPaint.measureText(text1[0]);
-
-			// 文字列の幅からX座標を計算
-			float textX = baseLeft + patting;
-			// 文字列の高さからY座標を計算
-			float textY = baseTop - fontMetrics.ascent + patting;
-
-			// 角なし四角のペイントの生成
-			Paint balloonPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-			balloonPaint.setTextSize(27 * thisrate);
-			balloonPaint.setColor(Color.argb(198, 255, 255, 255));
-
-			// 角なし四角の描画
-			RectF balloonRectF = new RectF(baseLeft, baseTop, baseRight,
-					baseBottom);
-			canvas.drawRoundRect(balloonRectF, ruff, ruff, balloonPaint);
-
-			// 文字列の描画
-			canvas.drawText(text1[0], textX, textY, textPaint);
-			canvas.drawText(text1[1], textX, textY + fontMetrics.bottom
-					- fontMetrics.ascent, textPaint);
-			canvas.drawText(text1[2], textX, textY + 2
-					* (fontMetrics.bottom - fontMetrics.ascent), textPaint);
-
-		}
-
+		
+		DisplayMetrics metrics = new DisplayMetrics();
+		Display display = (Display)((WindowManager)getSystemService(Context.WINDOW_SERVICE))
+			.getDefaultDisplay();
+		display.getMetrics(metrics);
+		
+		ViewGroup group = (ViewGroup)((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+			.inflate(R.layout.introduction_view, null);
+		AbsoluteLayout.LayoutParams params = new AbsoluteLayout.LayoutParams(
+				(int)(display.getWidth() * 0.8f),
+				AbsoluteLayout.LayoutParams.WRAP_CONTENT,
+				(int)(14 * metrics.scaledDensity * rate + x1),
+				(int)(71 * metrics.scaledDensity * rate + y1));
+		group.setLayoutParams(params);
+		group.setOnClickListener(new View.OnClickListener() {
+			@Override 
+			public void onClick(View v) {
+				Toast.makeText(CounterActivity.this, R.string.go_market_text, Toast.LENGTH_SHORT).show();
+				
+            	Resources res = getResources();
+            	String gotochiuri = new String();
+            	gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
+            	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
+			}
+		});
+		
+		FR.addView(group);
 	}
 
 }

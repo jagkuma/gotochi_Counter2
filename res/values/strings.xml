@@ -3,8 +3,6 @@
     <string name="hello">Hello World, testcounter!</string>
     <string name="app_name">全線開通記念カウンター</string>
     <string name="gotochiurl1">market://search?q=pname:</string>
-    <string name="gotochiurl2">com.android.email</string>
-    <string name="recomenddwnloadL1">"画面をタップすると"</string>
-    <string name="recomenddwnloadL2">"ご当地アプリが"</string>
-    <string name="recomenddwnloadL3">"ダウンロードできます。"</string>
+    <string name="gotochiurl2">jag.kumamoto.apps.gotochi.stamprally</string>
+    <string name="go_market_text">&quot;マーケットへ移動します&quot;</string>
 </resources>
