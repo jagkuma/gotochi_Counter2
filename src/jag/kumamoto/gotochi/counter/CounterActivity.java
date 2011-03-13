@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.*;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,7 +68,7 @@ public class CounterActivity extends Activity {
 		FR.addView(BackGroundImg);
 
 	}
-	
+
 	private static Date getXDay() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
@@ -671,16 +674,41 @@ public class CounterActivity extends Activity {
 		group.setOnClickListener(new View.OnClickListener() {
 			@Override 
 			public void onClick(View v) {
-				Toast.makeText(CounterActivity.this, R.string.go_market_text, Toast.LENGTH_SHORT).show();
-				
-            	Resources res = getResources();
-            	String gotochiuri = new String();
-            	gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
-            	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
+				MkApologyDialog().show();
+				//Toast.makeText(CounterActivity.this, R.string.go_market_text, Toast.LENGTH_SHORT).show();
+            	//Resources res = getResources();
+            	//String gotochiuri = new String();
+            	//gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
+            	//startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
 			}
 		});
 		
 		FR.addView(group);
+	}
+	private AlertDialog  MkApologyDialog(){
+		
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        // アラートダイアログのタイトルを設定します
+        alertDialogBuilder.setTitle("リリース遅延のお知らせ");
+        // アラートダイアログのメッセージを設定します
+        alertDialogBuilder.setMessage("配信が遅れて申し訳ありません。\n リリース開始まで、しばらくお待ちください。");
+        // アラートダイアログの肯定ボタンがクリックされた時に呼び出されるコールバックリスナーを登録します
+        alertDialogBuilder.setPositiveButton("ＯＫ",
+            new DialogInterface.OnClickListener() {
+              
+                 
+                public void onClick(DialogInterface dialog, int which) {
+                	/*
+                	Resources res = getResources();
+                	String gotochiuri = new String();
+                	gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
+                	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
+                	*/
+                }
+        		
+         });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        return alertDialog;
 	}
 
 }
