@@ -5,4 +5,5 @@
     <string name="gotochiurl1">market://search?q=pname:</string>
     <string name="gotochiurl2">jag.kumamoto.apps.gotochi.stamprally</string>
     <string name="go_market_text">&quot;マーケットへ移動します&quot;</string>
+    <string name="sorry">もしエラーになったら、まだリリースされていないかもしれないので、数日待って見てください。</string>
 </resources>

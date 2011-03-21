@@ -44,5 +44,6 @@ public final class R {
         public static final int gotochiurl1=0x7f040002;
         public static final int gotochiurl2=0x7f040003;
         public static final int hello=0x7f040000;
+        public static final int sorry=0x7f040005;
     }
 }

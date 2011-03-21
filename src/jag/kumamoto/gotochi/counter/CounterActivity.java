@@ -674,12 +674,17 @@ public class CounterActivity extends Activity {
 		group.setOnClickListener(new View.OnClickListener() {
 			@Override 
 			public void onClick(View v) {
-				MkApologyDialog().show();
-				//Toast.makeText(CounterActivity.this, R.string.go_market_text, Toast.LENGTH_SHORT).show();
-            	//Resources res = getResources();
-            	//String gotochiuri = new String();
-            	//gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
-            	//startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
+				try{
+					//Toast.makeText(CounterActivity.this, R.string.go_market_text, Toast.LENGTH_SHORT).show();
+					Toast.makeText(CounterActivity.this, R.string.sorry, Toast.LENGTH_LONG).show();
+	            	Resources res = getResources();
+	            	String gotochiuri = new String();
+					gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
+	            	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
+				}catch(Exception ex) {
+					MkApologyDialog().show();
+				}
+
 			}
 		});
 		
