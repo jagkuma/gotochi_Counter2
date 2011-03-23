@@ -1,7 +1,18 @@
 package jag.kumamoto.gotochi.counter;
 
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -72,7 +83,7 @@ public class CounterActivity extends Activity {
 	private static Date getXDay() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
-		calendar.set(2011, 2, 12, 18, 0);
+		calendar.set(2011,2 , 12, 18, 0);
 		return calendar.getTime();
 	}
 
@@ -674,12 +685,17 @@ public class CounterActivity extends Activity {
 		group.setOnClickListener(new View.OnClickListener() {
 			@Override 
 			public void onClick(View v) {
-				MkApologyDialog().show();
-				//Toast.makeText(CounterActivity.this, R.string.go_market_text, Toast.LENGTH_SHORT).show();
-            	//Resources res = getResources();
-            	//String gotochiuri = new String();
-            	//gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
-            	//startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
+
+				if (FileDownload("https://sites.google.com/site/jagkumamoto/benkyou-kai-shiryou/test.txt?attredirects=0&d=1") == true ){
+					MkApologyDialog().show();
+				}else{
+					
+					Toast.makeText(CounterActivity.this, R.string.go_market_text, Toast.LENGTH_SHORT).show();
+					Resources res = getResources();
+	            	String gotochiuri = new String();
+	            	gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
+	            	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
+				}
 			}
 		});
 		
@@ -695,20 +711,53 @@ public class CounterActivity extends Activity {
         // アラートダイアログの肯定ボタンがクリックされた時に呼び出されるコールバックリスナーを登録します
         alertDialogBuilder.setPositiveButton("ＯＫ",
             new DialogInterface.OnClickListener() {
-              
-                 
                 public void onClick(DialogInterface dialog, int which) {
-                	/*
-                	Resources res = getResources();
-                	String gotochiuri = new String();
-                	gotochiuri = res.getString(R.string.gotochiurl1) + res.getString(R.string.gotochiurl2);
-                	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gotochiuri)));  
-                	*/
-                }
-        		
+                 }
+ 		
          });
         AlertDialog alertDialog = alertDialogBuilder.create();
         return alertDialog;
 	}
+	private Boolean FileDownload(String uri) {  
+	    int responseCode = 0;  
+	    int BUFFER_SIZE = 10240;  
+	    Boolean bool = false;
+	    URI url;
+
+	  
+	    HttpClient hClient = new DefaultHttpClient();  
+	    HttpGet hGet = new HttpGet();  
+	    HttpResponse hResp = null;  
+	  
+	    hClient.getParams().setParameter("http.connection.timeout", new Integer(15000));  
+		try {
+			url = new URI(uri);
+		    try {
+		    	hGet.setURI(url);  
+		    	hResp = hClient.execute(hGet);  
+		    	responseCode = hResp.getStatusLine().getStatusCode();  
+			  	  
+			    if (responseCode == HttpStatus.SC_OK) {  
+			       bool  = true;
+			    }   
+			    else if (responseCode == HttpStatus.SC_NOT_FOUND) {  
+			        bool = false;
+			    }  
+			    else if (responseCode == HttpStatus.SC_REQUEST_TIMEOUT) {  
+			        bool = true;
+			    }  
+		    }catch(ClientProtocolException ex){
+		    	bool = true;
+		    }
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+	    	return bool;
+	    }
+	    
+	  
+	}  
+	
 
 }
